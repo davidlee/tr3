@@ -4,6 +4,17 @@ use commands::Commands::*;
 
 pub(crate) mod commands;
 
+pub(crate) mod ui {
+    use crate::data::Node;
+
+    pub fn print_nodes(nodes: Vec<Node>) -> () {
+        println!("id | parent | descr ");
+        for node in nodes {
+            println!("{:?} {:?} {}", node.id, node.parent_id, node.descr);
+        }
+    }
+}
+
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 
@@ -24,11 +35,7 @@ pub fn dispatch(ctx: &mut crate::AppContext) {
             Err(e) => println!("error: {:?}", e),
         },
         List => match Node::list(ctx) {
-            Ok(nodes) => {
-                for node in nodes {
-                    println!("Node: {:?}", node);
-                }
-            }
+            Ok(nodes) => ui::print_nodes(nodes),
             Err(_) => println!("error."),
         },
         Modify { id: _, descr: _ } => stub(),

@@ -5,9 +5,9 @@
 
 #[derive(Debug, Clone)]
 pub struct Node {
-    id: i32,
-    parent_id: Option<i32>,
-    descr: String,
+    pub id: i32,
+    pub parent_id: Option<i32>,
+    pub descr: String,
 }
 
 impl Node {
