@@ -1,33 +1,25 @@
-// use rusqlite::{Connection, MappedRows};
+use rusqlite::{Connection, Result};
 
 // implements the Repository pattern
 // maps object data to relational database operations on behalf of commands
 
 #[derive(Debug, Clone)]
 pub struct Node {
-    pub id: i64,
+    pub id: i64, // TODO add unstable identifier
     pub parent_id: Option<i64>,
     pub descr: String,
 }
 
 impl Node {
-    pub fn insert(
-        ctx: &mut crate::AppContext,
-        parent_id: Option<i64>,
-        slop: Vec<String>,
-    ) -> rusqlite::Result<i64> {
-        let descr = slop.join(" ");
-        // let parent = parent_id.map_or("NULL".to_string(), |x| x.to_string());
-        let conn = &ctx.connection;
+    pub fn insert(conn: &mut Connection, parent_id: Option<i64>, slop: Vec<String>) -> Result<i64> {
         conn.execute(
             "INSERT INTO Node (parent_id, descr) VALUES (?1, ?2)",
-            (parent_id, descr),
+            (parent_id, slop.join(" ")),
         )?;
         Ok(conn.last_insert_rowid())
     }
 
-    pub fn list(ctx: &mut crate::AppContext) -> rusqlite::Result<Vec<Node>> {
-        let conn = &ctx.connection;
+    pub fn list(conn: &mut Connection) -> Result<Vec<Node>> {
         let mut stmt = conn.prepare("SELECT * FROM Node")?;
         let rows = stmt.query_map([], |row| {
             Ok(Node {
@@ -50,10 +42,7 @@ struct Tag {
     id: i32,
     parent_id: Option<i32>,
     name: String,
+    full_name: String,
 }
 
-#[derive(Debug)]
-struct Tagging {
-    tag_id: i32,
-    node_id: i32,
-}
+impl Tag {}

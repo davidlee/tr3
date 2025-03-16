@@ -27,6 +27,7 @@ pub fn install(conn: &Connection) -> Result<()> {
             id INTEGER PRIMARY KEY,
             parent_id INTEGER,
             name TEXT NOT NULL,   
+            full_name TEXT NOT NULL, 
 
             FOREIGN KEY(parent_id) REFERENCES Tag(id)
         )",

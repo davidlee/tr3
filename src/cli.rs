@@ -1,6 +1,7 @@
 use crate::data::Node;
 use clap::Parser;
 use commands::Commands::*;
+use rusqlite::Connection;
 
 pub(crate) mod commands;
 
@@ -33,15 +34,15 @@ struct Args {
     slop: Vec<String>,
 }
 
-pub fn dispatch(ctx: &mut crate::AppContext) {
+pub fn dispatch(conn: &mut Connection) {
     let args = Args::parse();
 
     match args.cmd {
-        Add { parent_id, slop } => match Node::insert(ctx, parent_id, slop) {
+        Add { parent_id, slop } => match Node::insert(conn, parent_id, slop) {
             Ok(n) => println!("Created task {:?}.", n),
             Err(e) => println!("error: {:?}", e),
         },
-        List => match Node::list(ctx) {
+        List => match Node::list(conn) {
             Ok(nodes) => ui::print_nodes(nodes),
             Err(e) => println!("error: {:?}", e),
         },

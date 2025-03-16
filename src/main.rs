@@ -15,14 +15,11 @@ enum Error {
 type Result<T> = std::result::Result<T, Error>;
 
 fn main() -> Result<()> {
-    let mut ctx = AppContext {
-        connection: db::connect().unwrap(),
-    };
-    // db::connect().unwrap();
-    let _result = cli::dispatch(&mut ctx);
+    let mut conn = db::connect().unwrap();
+    let _result = cli::dispatch(&mut conn);
     Ok(())
 }
 
-struct AppContext {
-    connection: rusqlite::Connection,
-}
+// struct AppContext {
+//     connection: rusqlite::Connection,
+// }
