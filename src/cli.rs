@@ -9,8 +9,10 @@ pub(crate) mod ui {
 
     pub fn print_nodes(nodes: Vec<Node>) -> () {
         println!("id | parent | descr ");
+        println!("--------------------------------");
         for node in nodes {
-            println!("{:?} {:?} {}", node.id, node.parent_id, node.descr);
+            let p: String = node.parent_id.map_or("".to_string(), |x| x.to_string());
+            println!("{:?}  | {}       | {}", node.id, p, node.descr);
         }
     }
 }
@@ -30,19 +32,16 @@ pub fn dispatch(ctx: &mut crate::AppContext) {
     let args = Args::parse();
 
     match args.cmd {
-        Add { slop } => match Node::insert(ctx, slop) {
-            Ok(n) => println!("Ok, {:?}", n),
+        Add { parent_id, slop } => match Node::insert(ctx, parent_id, slop) {
+            Ok(n) => println!("Created task {:?}.", n),
             Err(e) => println!("error: {:?}", e),
         },
         List => match Node::list(ctx) {
             Ok(nodes) => ui::print_nodes(nodes),
-            Err(_) => println!("error."),
+            Err(e) => println!("error: {:?}", e),
         },
-        Modify { id: _, descr: _ } => stub(),
-        Done { id: _ } => stub(),
+        Modify { id: _, slop: _ } => stub(),
         Delete { id: _ } => stub(),
-        GetConfig { key: _ } => stub(),
-        SetConfig { key: _, value: _ } => stub(),
     }
 }
 

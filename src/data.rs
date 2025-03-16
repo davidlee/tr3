@@ -5,16 +5,24 @@
 
 #[derive(Debug, Clone)]
 pub struct Node {
-    pub id: i32,
-    pub parent_id: Option<i32>,
+    pub id: i64,
+    pub parent_id: Option<i64>,
     pub descr: String,
 }
 
 impl Node {
-    pub fn insert(ctx: &mut crate::AppContext, slop: Vec<String>) -> rusqlite::Result<i64> {
+    pub fn insert(
+        ctx: &mut crate::AppContext,
+        parent_id: Option<i64>,
+        slop: Vec<String>,
+    ) -> rusqlite::Result<i64> {
         let descr = slop.join(" ");
+        // let parent = parent_id.map_or("NULL".to_string(), |x| x.to_string());
         let conn = &ctx.connection;
-        conn.execute("INSERT INTO Node (descr) VALUES (?1)", [descr])?;
+        conn.execute(
+            "INSERT INTO Node (parent_id, descr) VALUES (?1, ?2)",
+            (parent_id, descr),
+        )?;
         Ok(conn.last_insert_rowid())
     }
 
