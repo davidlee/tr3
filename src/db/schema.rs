@@ -1,12 +1,12 @@
 use rusqlite::{Connection, Result};
 
-fn is_ready(conn: &Connection) -> bool {
-    if conn.execute("SELECT COUNT(*) FROM Node", ()).err() == None {
-        return true;
-    } else {
-        return false;
-    }
-}
+// fn is_ready(conn: &Connection) -> bool {
+//     if conn.execute("SELECT COUNT(*) FROM Node", ()).err() == None {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
 pub fn install(conn: &Connection) -> Result<()> {
     conn.execute("PRAGMA foreign_keys = ON", ())?;

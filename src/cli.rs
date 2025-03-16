@@ -1,39 +1,30 @@
-use clap::{Parser, Subcommand};
-use rusqlite::Result;
+use clap::Parser;
+
+pub(crate) mod commands;
 
 #[derive(Parser)]
 #[command(version, about)]
 
 struct Args {
     #[command(subcommand)]
-    cmd: Commands,
+    cmd: commands::Commands,
 }
 
-#[derive(Subcommand, Debug, Clone)]
-pub enum Commands {
-    Add { descr: String },
-    Modify { id: String, descr: String },
-    List,
-    Done { id: String },
-    Delete { id: String },
-    ListConfig,
-    GetConfig { key: String },
-    SetConfig { key: String, value: String },
-}
-
-pub fn dispatch() -> Result<()> {
+pub fn dispatch(ctx: &mut crate::AppContext) -> crate::Result<bool> {
     let args = Args::parse();
 
     match args.cmd {
-        Commands::Add { descr: _ } => {}
-        Commands::Modify { id: _, descr: _ } => {}
-        Commands::List => {}
-        Commands::Done { id: _ } => {}
-        Commands::Delete { id: _ } => {}
-        Commands::ListConfig => {}
-        Commands::GetConfig { key: _ } => {}
-        Commands::SetConfig { key: _, value: _ } => {}
+        commands::Commands::Add { descr } => crate::data::Node::insert(ctx, descr),
+        commands::Commands::Modify { id: _, descr: _ } => stub(),
+        commands::Commands::List => stub(),
+        commands::Commands::Done { id: _ } => stub(),
+        commands::Commands::Delete { id: _ } => stub(),
+        commands::Commands::ListConfig => stub(),
+        commands::Commands::GetConfig { key: _ } => stub(),
+        commands::Commands::SetConfig { key: _, value: _ } => stub(),
     }
+}
 
-    Ok(())
+pub fn stub() -> Result<bool, crate::Error> {
+    Err(crate::Error::NotImplementedError)
 }

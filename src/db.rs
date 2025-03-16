@@ -8,13 +8,7 @@ use std::{
 pub(crate) mod schema;
 
 pub fn connect() -> Result<Connection, rusqlite::Error> {
-    if !file_exists() {
-        fs::create_dir_all(data_dir()).unwrap();
-        let conn = Connection::open(path())?;
-        schema::install(&conn)?;
-        return Ok(conn);
-    }
-    println!("exists then");
+    ensure_database_exists();
     Connection::open(path())
 }
 
@@ -34,4 +28,12 @@ fn path() -> PathBuf {
 
 fn file_exists() -> bool {
     path().try_exists().is_ok_and(|x| !!x)
+}
+
+fn ensure_database_exists() {
+    if !file_exists() {
+        fs::create_dir_all(data_dir()).unwrap();
+        let conn = Connection::open(path()).unwrap();
+        schema::install(&conn).unwrap();
+    }
 }
