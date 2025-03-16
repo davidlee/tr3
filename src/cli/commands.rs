@@ -15,7 +15,6 @@ pub enum Commands {
     List,
     Done { id: String },
     Delete { id: String },
-    ListConfig,
     GetConfig { key: String },
     SetConfig { key: String, value: String },
 }

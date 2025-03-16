@@ -1,3 +1,5 @@
+// use rusqlite::{Connection, MappedRows};
+
 // implements the Repository pattern
 // maps object data to relational database operations on behalf of commands
 
@@ -9,15 +11,29 @@ pub struct Node {
 }
 
 impl Node {
-    pub fn insert(ctx: &mut crate::AppContext, slop: Vec<String>) -> crate::Result<bool> {
+    pub fn insert(ctx: &mut crate::AppContext, slop: Vec<String>) -> rusqlite::Result<i64> {
         let descr = slop.join(" ");
         let conn = &ctx.connection;
-        let result = conn.execute("INSERT INTO Node (descr) VALUES (?1)", [descr]);
-        match result {
-            Ok(1) => return Ok(true),
-            Ok(_) => return Ok(false),
-            Err(e) => return Err(crate::Error::Rusqlite(e)),
+        conn.execute("INSERT INTO Node (descr) VALUES (?1)", [descr])?;
+        Ok(conn.last_insert_rowid())
+    }
+
+    pub fn list(ctx: &mut crate::AppContext) -> rusqlite::Result<Vec<Node>> {
+        let conn = &ctx.connection;
+        let mut stmt = conn.prepare("SELECT * FROM Node")?;
+        let rows = stmt.query_map([], |row| {
+            Ok(Node {
+                id: row.get(0)?,
+                parent_id: row.get(1)?,
+                descr: row.get(2)?,
+            })
+        })?;
+        let mut nodes = Vec::new();
+
+        for node in rows {
+            nodes.push(node?);
         }
+        Ok(nodes)
     }
 }
 
