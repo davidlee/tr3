@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 clap = { version = "4.5.32", features = ["derive"] }
+resolve-path = "0.1.0"
 rusqlite = { version = "0.34.0", features = ["bundled"] }
