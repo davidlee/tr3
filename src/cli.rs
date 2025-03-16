@@ -6,14 +6,19 @@ pub(crate) mod commands;
 
 pub(crate) mod ui {
     use crate::data::Node;
+    use comfy_table::{Table, presets::ASCII_FULL_CONDENSED}; // no lines between rows
 
     pub fn print_nodes(nodes: Vec<Node>) -> () {
-        println!("id | parent | descr ");
-        println!("--------------------------------");
+        let mut table = Table::new();
+        table.load_preset(ASCII_FULL_CONDENSED);
+        table.set_header(vec!["id", "parent", "description"]);
+
         for node in nodes {
-            let p: String = node.parent_id.map_or("".to_string(), |x| x.to_string());
-            println!("{:?}  | {}       | {}", node.id, p, node.descr);
+            let id = node.id.to_string();
+            let parent = node.parent_id.map_or("".to_string(), |x| x.to_string());
+            table.add_row(vec![id, parent, node.descr]);
         }
+        println!("{table}");
     }
 }
 
