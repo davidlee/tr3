@@ -9,7 +9,8 @@ pub struct Node {
 }
 
 impl Node {
-    pub fn insert(ctx: &mut crate::AppContext, descr: String) -> crate::Result<bool> {
+    pub fn insert(ctx: &mut crate::AppContext, slop: Vec<String>) -> crate::Result<bool> {
+        let descr = slop.join(" ");
         let conn = &ctx.connection;
         let result = conn.execute("INSERT INTO Node (descr) VALUES (?1)", [descr]);
         match result {

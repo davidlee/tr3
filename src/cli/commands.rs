@@ -10,7 +10,7 @@ pub mod set_config;
 
 #[derive(Subcommand, Debug, Clone)]
 pub enum Commands {
-    Add { descr: String },
+    Add { slop: Vec<String> },
     Modify { id: String, descr: String },
     List,
     Done { id: String },

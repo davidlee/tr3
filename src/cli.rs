@@ -3,18 +3,21 @@ use clap::Parser;
 pub(crate) mod commands;
 
 #[derive(Parser)]
-#[command(version, about)]
+#[command(version, about, long_about = None)]
 
 struct Args {
     #[command(subcommand)]
     cmd: commands::Commands,
+
+    #[arg(last = true)]
+    slop: Vec<String>,
 }
 
 pub fn dispatch(ctx: &mut crate::AppContext) -> crate::Result<bool> {
     let args = Args::parse();
 
     match args.cmd {
-        commands::Commands::Add { descr } => crate::data::Node::insert(ctx, descr),
+        commands::Commands::Add { slop } => crate::data::Node::insert(ctx, slop),
         commands::Commands::Modify { id: _, descr: _ } => stub(),
         commands::Commands::List => stub(),
         commands::Commands::Done { id: _ } => stub(),
