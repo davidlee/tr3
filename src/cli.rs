@@ -38,7 +38,11 @@ pub fn dispatch(conn: &mut Connection) {
     let args = Args::parse();
 
     match args.cmd {
-        Add { parent_id, slop } => match Node::insert(conn, parent_id, slop) {
+        Add {
+            parent_id,
+            tags,
+            slop,
+        } => match Node::insert(conn, parent_id, tags, slop) {
             Ok(n) => println!("Created task {:?}.", n),
             Err(e) => println!("error: {:?}", e),
         },
@@ -46,7 +50,11 @@ pub fn dispatch(conn: &mut Connection) {
             Ok(nodes) => ui::print_nodes(nodes),
             Err(e) => println!("error: {:?}", e),
         },
-        Modify { id: _, slop: _ } => stub(),
+        Modify {
+            id: _,
+            tags: _,
+            slop: _,
+        } => stub(),
         Delete { id: _ } => stub(),
     }
 }

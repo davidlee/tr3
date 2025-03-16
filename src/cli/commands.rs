@@ -11,18 +11,23 @@ pub mod modify;
 #[derive(Subcommand, Debug, Clone)]
 pub enum Commands {
     Add {
-        #[arg(short = 'p')]
+        #[arg(short = 'p', long = "parent")]
         parent_id: Option<i64>,
-        slop: Vec<String>,
+
+        #[arg(short = 't', long = "tag", value_delimiter=',', num_args=1..)]
+        tags: Vec<String>,
+
+        slop: Vec<String>, // descr
     },
     Modify {
         id: i64,
+
+        #[arg(short = 't', long = "tag", value_delimiter=',', num_args=1..)]
+        tags: Vec<String>,
+
         slop: Vec<String>,
     },
     List,
-    // Done {
-    //     id: i64,
-    // },
     Delete {
         id: i64,
     },

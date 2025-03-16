@@ -1,48 +1,42 @@
 use rusqlite::{Connection, Result};
 
-// fn is_ready(conn: &Connection) -> bool {
-//     if conn.execute("SELECT COUNT(*) FROM Node", ()).err() == None {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
-
 pub fn install(conn: &Connection) -> Result<()> {
-    conn.execute("PRAGMA foreign_keys = ON", ())?;
-    conn.execute(
+    conn.execute_batch(
         "
-        CREATE TABLE Node (
+        BEGIN;
+        PRAGMA foreign_keys = ON;
+            
+        CREATE TABLE Nodes (
             id INTEGER PRIMARY KEY,
             parent_id INTEGER,
             descr TEXT NOT NULL,
             
-            FOREIGN KEY(parent_id) REFERENCES Node(id)
-        )",
-        (),
-    )?;
-    conn.execute(
-        "
-        CREATE TABLE Tag (
+            FOREIGN KEY(parent_id) REFERENCES Nodes(id)
+        );
+
+        CREATE TABLE Tags (
             id INTEGER PRIMARY KEY,
             parent_id INTEGER,
             name TEXT NOT NULL,   
             full_name TEXT NOT NULL, 
 
-            FOREIGN KEY(parent_id) REFERENCES Tag(id)
-        )",
-        (),
-    )?;
-    conn.execute(
-        "
-        CREATE TABLE Tagging (
+            FOREIGN KEY(parent_id) REFERENCES Tags(id)
+        );
+
+        CREATE UNIQUE INDEX uniq_tag_name ON Tags (name);
+        CREATE UNIQUE INDEX uniq_tag_full_name ON Tags (full_name);
+
+        CREATE TABLE Taggings (
             tag_id INTEGER NOT NULL,
             node_id INTEGER NOT NULL,
 
-            FOREIGN KEY(node_id) REFERENCES Node(id)
-            FOREIGN KEY(tag_id) REFERENCES Tag(id)
-        )",
-        (),
+            FOREIGN KEY(node_id) REFERENCES Nodes(id)
+            FOREIGN KEY(tag_id) REFERENCES Tags(id)
+        );
+
+        CREATE UNIQUE INDEX uniq_tagging ON Taggings (tag_id, node_id);
+        COMMIT;
+        ",
     )?;
     Ok(())
 }
